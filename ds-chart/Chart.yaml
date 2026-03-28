@@ -1,0 +1,5 @@
+apiVersion: v2
+name: ping-ds
+description: Ping Directory Deployment
+version: 0.1.0
+appVersion: "8.0.2"

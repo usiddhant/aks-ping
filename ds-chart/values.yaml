@@ -1,0 +1,27 @@
+replicaCount: 2
+
+image:
+  repository: ds
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  ports:
+    ldap: 1389
+    ldaps: 1636
+    admin: 4444
+    replication: 8989
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "2Gi"
+  limits:
+    cpu: "1"
+    memory: "4Gi"
+
+persistence:
+  enabled: true
+  size: 5Gi
+  storageClass: "standard "
+

@@ -19,3 +19,19 @@ kubectl create secret generic ds-secrets \
         - name: secrets-volume
           secret:
             secretName: ds-secrets # This must match the name in Step 1
+
+
+
+helm install ds ./ds-chart
+helm uninstall ds ./ds-chart 
+
+kubectl delete svc ds
+kubectl delete pvc -l app=ds   # optional but recommended
+
+kubectl exec -it ds-0  -- /bin/bash 
+kubectl logs ds-0 -c ds-init    : check init container log
+
+
+kubectl get pod  
+ kubectl logs ds-0
+

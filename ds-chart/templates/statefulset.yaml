@@ -24,6 +24,31 @@ spec:
           args:
             - |
               
+              echo "Test0----"
+              ls -lrt /opt/opendj/
+              echo "Test1----"
+              ls -lrt /opt/opendj/data
+              echo "Test2----"
+              ls -lrt /opt/opendj/data/db
+              echo "Test3----"
+              ls -lrt /opt/opendj/db
+              echo "Test4----"
+
+              echo "PWD"
+              pwd
+              echo "List /opt/opendj/config"
+              ls -lrt  /opt/opendj/config
+
+              cat /opt/opendj/config/keystore.pin
+
+              echo "---->---"
+
+              ls -lrt db 
+              ls -lrt changelogDb 
+              ls -lrt import-tmp
+              ls -lrt locks
+              ls -lrt var
+              
               # 1. Run your custom profile setup
               ADMIN_PWD=$(cat /opt/opendj/secrets/admin.pwd)
               echo "Running AM CTS profile..."

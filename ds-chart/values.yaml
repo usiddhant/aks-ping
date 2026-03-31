@@ -1,7 +1,7 @@
-replicaCount: 2
+replicaCount: 1
 
 image:
-  repository: ds
+  repository: ds1
   tag: "latest"
   pullPolicy: IfNotPresent
 

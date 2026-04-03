@@ -22,6 +22,8 @@ kubectl create secret generic ds-secrets \
 
 
 
+eval $(minikube docker-env)
+
 helm install ds ./ds-chart
 helm uninstall ds ./ds-chart 
 
@@ -33,5 +35,9 @@ kubectl logs ds-0 -c ds-init    : check init container log
 
 
 kubectl get pod  
- kubectl logs ds-0
+kubectl logs ds-0
+
+
+
+keytool -list -v -keystore keystore -storepass "changeit"
 

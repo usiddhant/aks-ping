@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: am
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: am
+  template:
+    metadata:
+      labels:
+        app: am
+    spec:
+      initContainers:
+        - name: init-truststore
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Creating truststore..."
+
+              cp $JAVA_HOME/lib/security/cacerts /shared/truststore
+              ls -lrt /var/run/secrets/am
+
+              keytool -storepasswd \
+                -keystore /shared/truststore \
+                -storepass changeit \
+                -new changeit \
+                -noprompt
+
+              openssl s_client -connect ds:1636 -showcerts </dev/null | openssl x509 -outform PEM > /shared/ds-cert.pem
+
+              keytool -importcert -file /shared/ds-cert.pem -alias ds-eval -keystore /shared/truststore -storepass changeit -noprompt
+
+
+          volumeMounts:
+            - name: am-secrets
+              mountPath: /var/run/secrets/am
+              readOnly: true
+            - name: shared-data
+              mountPath: /shared      
+      containers:
+        - name: am
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          
+
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: AM_STORES_USER_SERVERS
+              value: "{{ .Values.ds.host }}:{{ .Values.ds.port }}"
+            - name: AM_STORES_CTS_SERVERS
+              value: "{{ .Values.ds.host }}:{{ .Values.ds.port }}"
+            - name: AM_STORES_APPLICATION_SERVERS
+              value: "{{ .Values.ds.host }}:{{ .Values.ds.port }}"
+            - name: AM_STORES_POLICY_SERVERS
+              value: "{{ .Values.ds.host }}:{{ .Values.ds.port }}"
+            - name: AM_STORES_UMA_SERVERS
+              value: "{{ .Values.ds.host }}:{{ .Values.ds.port }}"
+            - name: TRUSTSTORE_PATH
+              value: "{{ .Values.secrets.truststore.path }}"
+            - name: TRUSTSTORE_PASSWORD
+              value: "{{ .Values.secrets.truststore.password }}"  
+            - name: AM_STORES_USER_PASSWORD
+              value: "{{ .Values.ds.password }}" 
+            - name: AM_SERVER_FQDN
+              value: "{{ .Values.ingress.host }}"  
+              
+
+          volumeMounts:
+            - name: am-secrets
+              mountPath: /var/run/secrets/am
+              readOnly: true
+
+            - name: amster-secrets
+              mountPath: /var/run/secrets/amster
+              readOnly: true
+
+            - name: shared-data
+              mountPath: /shared  
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+      volumes:
+        - name: am-secrets
+          secret:
+            secretName: {{ .Values.secrets.am }}
+
+        - name: amster-secrets
+          secret:
+            secretName: {{ .Values.secrets.amster }}
+
+        - name: shared-data
+          emptyDir: {}    

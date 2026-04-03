@@ -1,0 +1,37 @@
+image:
+  repository: am-base
+  tag: 8.1.0
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  host: aks.example.com
+  tls: false
+
+ds:
+  host: ds
+  port: 1636
+  password: Changeit
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "2Gi"
+  limits:
+    cpu: "1"
+    memory: "4Gi"
+
+secrets:
+  am: am-secrets
+  amster: amster-secrets
+  truststore:
+    path: /shared/truststore
+    password: changeit

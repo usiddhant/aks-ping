@@ -76,7 +76,7 @@ spec:
             - name: DS_UID_ADMIN_PASSWORD_FILE
               value: /opt/opendj/secrets/admin.pwd
             - name: DS_UID_MONITOR_PASSWORD_FILE
-              value: /opt/opendj/secrets/monitor.pwd
+              value: /opt/opendj/secrets/monitor.pwd 
 
           ports:
             - containerPort: 1389

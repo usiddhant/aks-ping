@@ -1,5 +1,5 @@
 image:
-  repository: am-base
+  repository: am-cdk
   tag: 8.1.0
   pullPolicy: IfNotPresent
 
@@ -15,6 +15,7 @@ ingress:
   className: nginx
   host: aks.example.com
   tls: false
+  tlsSecret: am-tls
 
 ds:
   host: ds

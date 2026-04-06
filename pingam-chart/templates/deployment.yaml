@@ -67,8 +67,10 @@ spec:
               value: "{{ .Values.secrets.truststore.password }}"  
             - name: AM_STORES_USER_PASSWORD
               value: "{{ .Values.ds.password }}" 
-            - name: AM_SERVER_FQDN
-              value: "{{ .Values.ingress.host }}"  
+            - name: FQDN
+              value: "{{ .Values.ingress.host }}" 
+            - name: AM_PASSWORDS_AMADMIN_CLEAR
+              value: "{{ .Values.ds.password }}"    
               
 
           volumeMounts:

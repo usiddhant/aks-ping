@@ -5,14 +5,8 @@ metadata:
   name: am
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: {{ .Values.ingress.className }}
-  tls:
-    - hosts:
-        - {{ .Values.ingress.host }}
-      secretName: {{ .Values.ingress.tlsSecret }}
-      
   rules:
     - host: {{ .Values.ingress.host }}
       http:

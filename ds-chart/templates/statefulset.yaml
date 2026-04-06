@@ -89,7 +89,7 @@ spec:
               mountPath: /opt/opendj/data
             - name: secrets
               mountPath: /opt/opendj/secrets
-              readonly: true  
+              readOnly: true  
 
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

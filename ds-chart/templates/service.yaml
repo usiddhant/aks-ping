@@ -5,7 +5,7 @@ metadata:
 spec:
   clusterIP: None
   selector:
-    app: ds1
+    app: ds
   ports:
     - name: ldap
       port: 1389

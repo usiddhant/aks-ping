@@ -1,9 +1,15 @@
+
+
 openssl req -x509 -nodes -days 365 \
   -newkey rsa:2048 \
   -keyout tls.key \
   -out tls.crt \
-  -subj "/CN=am.localdev.me/O=dev"
+  -subj "/CN=aks.example.com/O=dev"
 
 kubectl create secret tls am-tls \
   --cert=tls.crt \
   --key=tls.key
+
+
+ ## Above commands will create CERTIFICATE and key to be used in AM ingress in order to run AM on https.
+ We are creating this 'am-tls' secret which is refrenced in pingam ingress.

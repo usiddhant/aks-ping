@@ -45,7 +45,7 @@ if( originalUri?.contains("login") )
 {
   exc?.request?.setUri("/am/json/authenticate"+queryString);
 }
-else{
+else if (originalUri?.contains("health")){
   
   exc?.request?.setUri(originalUri+"/live");
 }
@@ -53,27 +53,44 @@ else{
 
 
 
-def bodyStr = exc?.response?.body?.content;
+def bodyStrByte = exc?.response?.body?.content;
 
-exc.log.info "-->Response Body1:: "+ bodyStr;
+//exc.log.info "-->Response Body from AM in Byte:: "+ bodyStrByte;
 
-if(exc?.response && exc?.response?.statusCode == 200)
+
+
+/*if(bodyStr?.contains("authId") && exc?.response?.statusCode == 200  )
+{
+  exc.log.info "-->Response Body String:: "+ bodyStr;
+}*/
+
+if(exc?.response?.statusCode == 200)
 
 {
 
-def bodyStr1 = new String(bodyStr);
-exc.log.info "-->Response Body2:: "+ bodyStr1;  
-
-//bodyStr1 = bodyStr1.add("mobile", "1234567891");
-
-//exc?.response?.setBodyContent(bodyStr1.getBytes());
-
-  def json = new JsonSlurper().parseText(bodyStr1)
-  json.newField = "addedValue"; //add new field
-  json.header = "Login"    //update field
-  json.remove("authId")    //remove field
+  def bodyStr = new String(bodyStrByte);
+  exc.log.info "-->Response Body String:: "+ bodyStr;
   
-  exc.log.info "-->Json Body:: "+ json; 
+  def json = new JsonSlurper().parseText(bodyStr)
+  
+  if(bodyStr?.contains("authId"))
+  {
+    
+    //json.newField = "addedValue"; //add new field
+    //json.realm = "Login"    //update field
+    //json.remove("authId")    //remove field
+
+    //exc.log.info "-->Json Body:: "+ json;
+    
+  }
+  else
+  {
+    json.newField = "addedValue"; //add new field
+    json.realm = "Login"    //update field
+    json.remove("authId")    //remove field
+
+    exc.log.info "-->Json Body:: "+ json;
+  }
   
   def newString = JsonOutput.toJson(json);
   
@@ -82,19 +99,27 @@ exc.log.info "-->Response Body2:: "+ bodyStr1;
   exc?.response?.setBodyContent(newString.getBytes());
   
 }
+else if(exc?.response && exc?.response?.statusCode == 401)
+{
+  def bodyErrStr = new String(bodyStrByte);
+  exc.log.info "-->Response Body2:: "+ bodyErrStr;  
 
 
-
-/*
-if(exc?.response) {
+  def jsonErr = new JsonSlurper().parseText(bodyErrStr)
+  jsonErr.newField = "addedValue"; //add new field
+  jsonErr.message = "Custom Error Msg"    //update field
+  //jsonErr.remove("authId")    //remove field
+ 
+  exc.log.info "-->Json Body:: "+ jsonErr; 
   
-//def bodyStr = new String(test);
+  def newErrString = JsonOutput.toJson(jsonErr);
+  
+  exc.log.info "-->Json Body Updated:: "+ newErrString; 
+  
+  exc?.response?.setBodyContent(newErrString.getBytes());
+}  
 
-//bodyStr = bodyStr.add("mobile", "1234567891");
-exc.log.info "-->Response Body3:: "+ exc?.response?.body  
 
-//exc?.response?.setBodyContent("It looks good".getBytes());
-    
-}*/
 
 pass()
+
